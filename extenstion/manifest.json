@@ -1,0 +1,16 @@
+{
+  "manifest_version": 3,
+  "name": "LyenxPass",
+  "version": "1.0.0",
+  "description": "Password generator by Lyenx",
+  "permissions": ["activeTab", "scripting"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "LyenxPass - Password Generator"
+  },
+  "icons": {
+    "16": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect fill='%23222' width='16' height='16'/><text x='8' y='12' text-anchor='middle' fill='%23e0e0e0' font-size='10' font-weight='bold'>LP</text></svg>",
+    "48": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><rect fill='%23222' width='48' height='48'/><text x='24' y='34' text-anchor='middle' fill='%23e0e0e0' font-size='24' font-weight='bold'>LP</text></svg>",
+    "128": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 128'><rect fill='%23222' width='128' height='128'/><text x='64' y='84' text-anchor='middle' fill='%23e0e0e0' font-size='56' font-weight='bold'>LP</text></svg>"
+  }
+}
