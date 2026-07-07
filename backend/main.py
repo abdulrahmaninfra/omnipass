@@ -72,8 +72,23 @@ class PasswordGenerate:
         self.chars = chars
 
     def generate(self) -> str:
-        password = "".join(secrets.choice(self.chars) for _ in range(self.length))
-        return password
+        chars_list = list(self.chars)
+        password = []
+
+        password.append(secrets.choice(CharacterSet.lowerCase))
+        password.append(secrets.choice(CharacterSet.upperCase))
+        password.append(secrets.choice(CharacterSet.digits))
+        password.append(secrets.choice(CharacterSet.punctuation))
+
+        if self.include_arabic:
+            password.append(secrets.choice(CharacterSet.arabic_letters))
+            password.append(secrets.choice(CharacterSet.arabic_tashkeel))
+
+        remaining = self.length - len(password)
+        password.extend(secrets.choice(chars_list) for _ in range(remaining))
+
+        secrets.SystemRandom().shuffle(password)
+        return "".join(password)
 
 
 # generate?length=16&include_arabic=False
