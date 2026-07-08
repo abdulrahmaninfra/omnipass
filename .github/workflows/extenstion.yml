@@ -25,12 +25,12 @@ jobs:
       - name: Zip Extension
         run: |
           cd frontend
-          cd extension
+          cd extenstion
           zip -r omnipass_extension.zip .
 
       - name: Create a Github Release
         uses: softprops/action-gh-release@v1
         with:
           name: Extension Release ${{ github.ref_name }}
-          files: frontend/extension/omnipass_extension.zip
+          files: frontend/extenstion/omnipass_extension.zip
           generate_release_notes: true
