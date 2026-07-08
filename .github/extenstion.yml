@@ -1,0 +1,29 @@
+name: "Release OmniPass Extension"
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Zip Extension
+        run: |
+          cd frontend/extension
+          zip -r omnipass_extension.zip .
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        with:
+          tag_name: ${{ github.ref }}
+          asset_path: frontend/extension/omnipass_extension.zip
+          asset_name: omnipass_extension.zip
+          asset_content_type: application/zip
