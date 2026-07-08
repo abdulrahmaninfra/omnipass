@@ -1,347 +1,1108 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link
-            href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap"
-            rel="stylesheet"
-        />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>OmniPass</title>
-        <style>
-            * {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
-            }
+<head>
+  <meta charset="UTF-8" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>OmniPass - Bilingual Password Generator</title>
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --bg-card: #141414;
+      --bg-card-hover: #1a1a1a;
+      --bg-input: #1e1e1e;
+      --text: #e8e8e8;
+      --text-secondary: #888;
+      --text-muted: #555;
+      --border: #222;
+      --border-focus: #444;
+      --accent: #4a9eff;
+      --accent-glow: rgba(74,158,255,0.25);
+      --accent-warm: #ff9a4a;
+      --accent-warm-glow: rgba(255,154,74,0.2);
+      --success: #4caf50;
+      --success-bg: rgba(76,175,80,0.15);
+      --error: #ef5350;
+      --shadow: 0 0 40px rgba(0,0,0,0.4);
+      --radius: 12px;
+      --radius-sm: 8px;
+    }
+    [data-theme="light"] {
+      --bg: #f0f2f5;
+      --bg-card: #ffffff;
+      --bg-card-hover: #fafafa;
+      --bg-input: #f0f2f5;
+      --text: #1a1a2e;
+      --text-secondary: #6b7280;
+      --text-muted: #9ca3af;
+      --border: #e5e7eb;
+      --border-focus: #4a9eff;
+      --accent: #2563eb;
+      --accent-glow: rgba(37,99,235,0.15);
+      --accent-warm: #ea580c;
+      --accent-warm-glow: rgba(234,88,12,0.12);
+      --success: #16a34a;
+      --success-bg: rgba(22,163,74,0.1);
+      --error: #dc2626;
+      --shadow: 0 0 40px rgba(0,0,0,0.06);
+    }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 14px;
+      line-height: 1.6;
+      transition: background 0.3s, color 0.3s;
+      min-height: 100vh;
+    }
+    .arabic-script {
+      font-family: 'Cairo', sans-serif;
+      text-rendering: optimizeLegibility;
+    }
 
-            body {
-                background: #0a0a0a;
-                color: #e0e0e0;
-                font-family:
-                    -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-                font-size: 14px;
-                line-height: 1.6;
-            }
+    .theme-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 100;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      color: var(--text-secondary);
+      font-size: 18px;
+    }
+    .theme-toggle:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      box-shadow: 0 0 20px var(--accent-glow);
+    }
 
-            .arabic-text {
-                line-height: 1.8;
-                font-family: "Cairo", sans-serif;
-                text-rendering: optimizeLegibility;
-            }
+    .container {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
 
-            .container {
-                max-width: 500px;
-                margin: 0 auto;
-                padding: 40px 20px;
-                min-height: 100vh;
-                display: flex;
-                flex-direction: column;
-                justify-content: space-between;
-            }
+    .header {
+      text-align: center;
+      padding: 12px 0;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .title {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, var(--text), var(--text-secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .tagline {
+      font-size: 13px;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .tagline-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 10px;
+      border-radius: 20px;
+      background: var(--accent-warm-glow);
+      color: var(--accent-warm);
+      font-size: 11px;
+      font-weight: 600;
+      font-family: 'Cairo', sans-serif;
+    }
 
-            .header {
-                text-align: center;
-                margin-bottom: 40px;
-            }
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      transition: all 0.3s;
+    }
+    .card:hover {
+      border-color: var(--border-focus);
+    }
 
-            .title {
-                font-size: 24px;
-                font-weight: 600;
-                margin-bottom: 4px;
-                letter-spacing: -0.5px;
-            }
+    .password-area {
+      position: relative;
+    }
+    .password-display {
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 20px;
+      font-family: 'Monaco', 'Menlo', 'Cairo', monospace;
+      font-size: 15px;
+      word-break: break-all;
+      line-height: 1.8;
+      min-height: 72px;
+      color: var(--text);
+      transition: all 0.4s;
+      position: relative;
+      overflow: hidden;
+    }
+    .password-display.glow {
+      box-shadow: 0 0 30px var(--accent-glow), inset 0 0 30px rgba(74,158,255,0.03);
+      border-color: var(--accent);
+    }
+    .password-display.glow-warm {
+      box-shadow: 0 0 30px var(--accent-warm-glow), inset 0 0 30px rgba(255,154,74,0.03);
+      border-color: var(--accent-warm);
+    }
+    .password-display .placeholder {
+      color: var(--text-muted);
+      font-family: 'Inter', sans-serif;
+    }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(8px); filter: blur(4px); }
+      to { opacity: 1; transform: translateY(0); filter: blur(0); }
+    }
+    .password-display .password-text {
+      animation: slideIn 0.35s ease-out;
+    }
+    .password-display .password-text .ar-char {
+      color: var(--accent-warm);
+    }
+    .password-display .password-text .latin-char {
+      color: var(--accent);
+    }
+    .password-display .password-text .num-char {
+      color: var(--success);
+    }
+    .password-display .password-text .sym-char {
+      color: var(--text-secondary);
+    }
 
-            .tagline {
-                font-size: 12px;
-                color: #808080;
-            }
+    .char-breakdown {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+    }
+    .char-count {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+    .char-count .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .char-count .dot.ar { background: var(--accent-warm); }
+    .char-count .dot.latin { background: var(--accent); }
+    .char-count .dot.num { background: var(--success); }
+    .char-count .dot.sym { background: var(--text-muted); }
+    .char-count .count {
+      font-weight: 700;
+      color: var(--text);
+    }
 
-            .generator {
-                margin-bottom: 40px;
-            }
+    .strength-section {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .strength-bar-wrap {
+      flex: 1;
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .strength-bar {
+      height: 100%;
+      border-radius: 2px;
+      transition: width 0.5s ease, background 0.5s ease;
+      width: 0%;
+    }
+    .strength-bar.weak { background: #ef5350; width: 20%; }
+    .strength-bar.fair { background: #ff9800; width: 40%; }
+    .strength-bar.good { background: #ffc107; width: 60%; }
+    .strength-bar.strong { background: #8bc34a; width: 80%; }
+    .strength-bar.very-strong { background: var(--success); width: 100%; }
+    .strength-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+      min-width: 70px;
+      text-align: right;
+    }
+    .strength-label.weak { color: #ef5350; }
+    .strength-label.fair { color: #ff9800; }
+    .strength-label.good { color: #ffc107; }
+    .strength-label.strong { color: #8bc34a; }
+    .strength-label.very-strong { color: var(--success); }
 
-            .form-group {
-                margin-bottom: 20px;
-            }
+    .controls { margin-top: 20px; }
 
-            label {
-                display: block;
-                font-size: 12px;
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
-                color: #999;
-                margin-bottom: 8px;
-            }
+    .slider-group {
+      margin-bottom: 20px;
+    }
+    .slider-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .slider-header label {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+    .slider-value {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--accent);
+      font-variant-numeric: tabular-nums;
+      min-width: 32px;
+      text-align: right;
+    }
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: linear-gradient(to right, var(--accent) 0%, var(--border) 0%);
+      outline: none;
+      transition: background 0.1s;
+      cursor: pointer;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--bg-card);
+      border: 2px solid var(--accent);
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 0 10px var(--accent-glow);
+    }
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.15);
+      box-shadow: 0 0 20px var(--accent-glow);
+    }
+    input[type="range"]::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--bg-card);
+      border: 2px solid var(--accent);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    @keyframes thumbPulse {
+      0%, 100% { box-shadow: 0 0 10px var(--accent-glow); }
+      50% { box-shadow: 0 0 25px var(--accent-glow), 0 0 50px var(--accent-glow); }
+    }
+    input[type="range"].generating::-webkit-slider-thumb {
+      animation: thumbPulse 0.6s ease-in-out 2;
+    }
+    input[type="range"].generating::-moz-range-thumb {
+      animation: thumbPulse 0.6s ease-in-out 2;
+    }
 
-            input[type="number"] {
-                width: 100%;
-                padding: 10px 12px;
-                background: #1a1a1a;
-                border: 1px solid #2a2a2a;
-                color: #e0e0e0;
-                font-size: 14px;
-                border-radius: 4px;
-                font-family: inherit;
-            }
+    .option-chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.25s;
+      user-select: none;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+    .option-chip:hover {
+      border-color: var(--border-focus);
+      background: var(--bg-card-hover);
+    }
+    .option-chip.active {
+      border-color: var(--accent);
+      color: var(--text);
+      background: var(--accent-glow);
+    }
+    .option-chip.active.arabic-chip {
+      border-color: var(--accent-warm);
+      background: var(--accent-warm-glow);
+      color: var(--accent-warm);
+    }
+    .option-chip input[type="checkbox"] {
+      display: none;
+    }
+    .option-chip .chip-icon {
+      font-size: 15px;
+      line-height: 1;
+    }
+    .option-chip .chip-label {
+      flex: 1;
+    }
+    .option-chip .chip-badge {
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      padding: 1px 6px;
+      border-radius: 10px;
+      background: var(--accent-warm-glow);
+      color: var(--accent-warm);
+      font-weight: 600;
+    }
 
-            input[type="number"]:focus {
-                outline: none;
-                border-color: #666;
-            }
 
-            .checkbox-group {
-                display: flex;
-                gap: 20px;
-            }
 
-            .checkbox-item {
-                display: flex;
-                align-items: center;
-                gap: 6px;
-                cursor: pointer;
-                font-size: 13px;
-            }
+    .btn-copy {
+      padding: 12px 32px;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s;
+      font-family: inherit;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: var(--bg-input);
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+    }
+    .btn-copy:hover {
+      border-color: var(--border-focus);
+      color: var(--text);
+      background: var(--bg-card-hover);
+    }
+    .btn-copy.copied {
+      background: var(--success-bg);
+      border-color: var(--success);
+      color: var(--success);
+    }
+    .btn-copy .icon {
+      font-size: 16px;
+      line-height: 1;
+      transition: transform 0.2s;
+    }
+    .btn-copy.copied .icon {
+      transform: scale(1.2);
+    }
 
-            input[type="checkbox"] {
-                width: 16px;
-                height: 16px;
-                cursor: pointer;
-                accent-color: #666;
-            }
+    .status {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-align: center;
+      min-height: 20px;
+      margin-top: 8px;
+      transition: all 0.3s;
+    }
+    .status.success {
+      color: var(--success);
+    }
+    .status.error {
+      color: var(--error);
+    }
+    @keyframes pulseFade {
+      0% { opacity: 0; transform: scale(0.95); }
+      20% { opacity: 1; transform: scale(1); }
+      80% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+    .status.flash {
+      animation: pulseFade 1.5s ease-out;
+    }
 
-            .button-group {
-                display: flex;
-                gap: 10px;
-            }
+    .info-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .info-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      transition: all 0.3s;
+    }
+    .info-card:hover {
+      border-color: var(--border-focus);
+    }
+    .info-card.full {
+      grid-column: 1 / -1;
+    }
+    .info-card .info-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .info-card .info-value {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--accent);
+      font-variant-numeric: tabular-nums;
+    }
+    .info-card .info-value.ar-accent {
+      color: var(--accent-warm);
+    }
+    .info-card .info-desc {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
 
-            button {
-                flex: 1;
-                padding: 12px;
-                border: none;
-                border-radius: 4px;
-                font-size: 14px;
-                font-weight: 500;
-                cursor: pointer;
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
-                transition: all 0.2s;
-            }
+    .info-bilingual {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      transition: all 0.3s;
+    }
+    .info-bilingual:hover {
+      border-color: var(--border-focus);
+    }
+    .info-bilingual h3 {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .info-bilingual p {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+    .info-bilingual .benefits {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+    .info-bilingual .benefits span {
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .info-bilingual .benefits .check {
+      color: var(--success);
+      font-weight: 700;
+    }
 
-            .btn-generate {
-                background: #222;
-                color: #e0e0e0;
-                border: 1px solid #444;
-            }
+    .history-section {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      transition: all 0.3s;
+    }
+    .history-section:hover {
+      border-color: var(--border-focus);
+    }
+    .history-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .history-header h3 {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+    .history-header .clear-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 11px;
+      cursor: pointer;
+      padding: 0;
+      font-family: inherit;
+      transition: color 0.2s;
+    }
+    .history-header .clear-btn:hover {
+      color: var(--error);
+    }
+    .history-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .history-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'Monaco', 'Menlo', monospace;
+      font-size: 12px;
+    }
+    .history-item:hover {
+      border-color: var(--accent);
+      background: var(--accent-glow);
+    }
+    .history-item .h-entry {
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: var(--text-secondary);
+    }
+    .history-item .h-copy {
+      font-size: 14px;
+      color: var(--text-muted);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .history-item:hover .h-copy {
+      opacity: 1;
+    }
+    .history-empty {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-align: center;
+      padding: 12px 0;
+    }
 
-            .btn-generate:hover {
-                background: #333;
-                border-color: #555;
-            }
+    .footer {
+      text-align: center;
+      padding: 20px 0;
+      border-top: 1px solid var(--border);
+      margin-top: auto;
+    }
+    .footer-badges {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 500;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+    }
+    .badge.accent {
+      background: var(--accent-glow);
+      border-color: transparent;
+      color: var(--accent);
+    }
+    .badge.warm {
+      background: var(--accent-warm-glow);
+      border-color: transparent;
+      color: var(--accent-warm);
+    }
+    .footer-text {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+    .footer-text a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .footer-text a:hover {
+      text-decoration: underline;
+    }
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+    }
+    .footer-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 12px;
+      transition: color 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .footer-links a:hover {
+      color: var(--text-secondary);
+    }
 
-            .btn-copy {
-                background: #333;
-                color: #e0e0e0;
-                border: 1px solid #555;
-            }
+    @media (max-width: 500px) {
+      .container { padding: 20px 16px; }
+      .card { padding: 18px; }
+      .info-section { grid-template-columns: 1fr; }
+      .theme-toggle { top: 12px; right: 12px; width: 36px; height: 36px; font-size: 16px; }
+      .password-display { font-size: 13px; padding: 16px; }
+      .strength-section { flex-direction: column; align-items: stretch; }
+      .strength-label { text-align: left; }
+    }
 
-            .btn-copy:hover {
-                background: #444;
-            }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
 
-            .btn-copy.copied {
-                background: #1a3a1a;
-                border-color: #3a6a3a;
-            }
+<button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">&#9790;</button>
 
-            .output {
-                margin-bottom: 20px;
-            }
+<div class="container">
+  <header class="header">
+    <div class="logo">
+      <h1 class="title">OmniPass</h1>
+    </div>
+    <div class="tagline">
+      <span>Bilingual Password Generation</span>
+      <span class="tagline-badge">&#1575;&#1604;&#1593;&#1585;&#1576;&#1610;&#1577; + English</span>
+    </div>
+  </header>
 
-            .password-display {
-                background: #1a1a1a;
-                border: 1px solid #2a2a2a;
-                padding: 16px;
-                border-radius: 4px;
-                font-family: "Monaco", "Menlo", monospace;
-                font-size: 13px;
-                word-break: break-all;
-                line-height: 1.8;
-                min-height: 60px;
-                color: #b0b0b0;
-            }
+  <section class="card password-area">
+    <div class="password-display" id="output">
+      <span class="placeholder">&#8207;Generate a password</span>
+    </div>
+    <div id="charBreakdown" class="char-breakdown" style="display:none">
+      <span class="char-count"><span class="dot latin"></span> Latin <span class="count" id="latinCount">0</span></span>
+      <span class="char-count"><span class="dot ar"></span> Arabic <span class="count" id="arabicCount">0</span></span>
+      <span class="char-count"><span class="dot num"></span> Numbers <span class="count" id="numCount">0</span></span>
+      <span class="char-count"><span class="dot sym"></span> Symbols <span class="count" id="symCount">0</span></span>
+    </div>
+    <div class="strength-section" id="strengthSection" style="display:none">
+      <div class="strength-bar-wrap">
+        <div class="strength-bar" id="strengthBar"></div>
+      </div>
+      <div class="strength-label" id="strengthLabel"></div>
+    </div>
+  </section>
 
-            .status {
-                font-size: 12px;
-                color: #666;
-                text-align: center;
-                min-height: 20px;
-            }
+  <section class="card controls">
+    <div class="slider-group">
+      <div class="slider-header">
+        <label for="length">Password Length</label>
+        <span class="slider-value" id="lengthDisplay">16</span>
+      </div>
+      <input type="range" id="length" min="8" max="128" value="16" />
+    </div>
 
-            .status.success {
-                color: #6a9a6a;
-            }
+    <div>
+      <label class="option-chip active arabic-chip" id="arabicChip">
+        <input type="checkbox" id="arabic" checked />
+        <span class="chip-icon">&#1608;</span>
+        <span class="chip-label">Arabic</span>
+      </label>
+    </div>
+  </section>
 
-            .footer {
-                text-align: center;
-                padding-top: 40px;
-                border-top: 1px solid #1a1a1a;
-            }
+  <div style="text-align:center">
+    <button class="btn-copy" id="copy">
+      <span class="icon">&#128203;</span> Copy
+    </button>
+  </div>
+  <div class="status" id="status"></div>
 
-            .footer-text {
-                font-size: 12px;
-                color: #666;
-                margin-bottom: 12px;
-            }
+  <section class="info-section">
+    <div class="info-card">
+      <div class="info-title">&#9889; Entropy</div>
+      <div class="info-value" id="entropyValue">--</div>
+      <div class="info-desc">bits of randomness</div>
+    </div>
+    <div class="info-card">
+      <div class="info-title">&#128196; Character Set</div>
+      <div class="info-value ar-accent" id="charsetSize">--</div>
+      <div class="info-desc">characters available</div>
+    </div>
+  </section>
 
-            .social {
-                display: flex;
-                justify-content: center;
-                gap: 16px;
-            }
+  <section class="info-bilingual">
+    <h3><span></span> Why Bilingual Passwords?</h3>
+    <p>OmniPass combines Arabic script (<span class="arabic-script">&#1575;&#1604;&#1593;&#1585;&#1576;&#1610;&#1577;</span>) with Latin characters, numbers, and symbols. This unique approach creates passwords with dramatically larger character sets and higher entropy per character — making them inherently stronger against brute-force attacks.</p>
+    <div class="benefits">
+      <span><span class="check">&#10003;</span> 48% larger charset with Arabic</span>
+      <span><span class="check">&#10003;</span> Ideal for Arabic-speaking users</span>
+      <span><span class="check">&#10003;</span> Cryptographically secure</span>
+    </div>
+  </section>
 
-            a {
-                color: #888;
-                text-decoration: none;
-                font-size: 12px;
-                transition: color 0.2s;
-            }
+  <section class="history-section" id="historySection">
+    <div class="history-header">
+      <h3>&#128338; Recent Passwords</h3>
+      <button class="clear-btn" id="clearHistory">Clear</button>
+    </div>
+    <div class="history-list" id="historyList">
+      <div class="history-empty">No passwords yet</div>
+    </div>
+  </section>
 
-            a:hover {
-                color: #b0b0b0;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <div class="header">
-                <div class="title">OmniPass</div>
-                <div class="tagline">password generator</div>
-            </div>
+  <footer class="footer">
+    <div class="footer-badges">
+      <span class="badge accent">&#9889; Cryptographically Secure</span>
+      <span class="badge warm"> Bilingual</span>
+      <span class="badge">&#128214; Open Source</span>
+    </div>
+    <div class="footer-text">
+      Built with <a href="https://fastapi.tiangolo.com" target="_blank">FastAPI</a> &amp; <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank">Vanilla JS</a> by <a href="https://github.com/abdulrahmaninfra" target="_blank">abdulrahmaninfra</a>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/abdulrahmaninfra/omnipass" target="_blank">&#128279; GitHub</a>
+      <a href="https://github.com/abdulrahmaninfra/omnipass/issues" target="_blank">&#128196; Issues</a>
+      <a href="https://github.com/abdulrahmaninfra/omnipass?tab=License-1-ov-file" target="_blank">&#128214; MIT License</a>
+    </div>
+  </footer>
+</div>
 
-            <div class="generator">
-                <div class="form-group">
-                    <label>Length</label>
-                    <input
-                        type="number"
-                        id="length"
-                        min="8"
-                        max="128"
-                        value="16"
-                    />
-                </div>
+<script>
+  const API_BASE = 'https://omnipass-mu.vercel.app/generate';
 
-                <div class="form-group">
-                    <label>Options</label>
-                    <div class="checkbox-group">
-                        <label class="checkbox-item">
-                            <input type="checkbox" id="arabic" checked />
-                            <span>Arabic</span>
-                        </label>
-                        <label class="checkbox-item">
-                            <input type="checkbox" id="numbers" checked />
-                            <span>Numbers</span>
-                        </label>
-                    </div>
-                </div>
+  const $ = id => document.getElementById(id);
+  const output = $('output');
+  const status = $('status');
+  const copyBtn = $('copy');
+  const lengthInput = $('length');
+  const lengthDisplay = $('lengthDisplay');
+  const arabicCheck = $('arabic');
+  const arabicChip = $('arabicChip');
+  const charBreakdown = $('charBreakdown');
+  const latinCount = $('latinCount');
+  const arabicCount = $('arabicCount');
+  const numCount = $('numCount');
+  const symCount = $('symCount');
+  const strengthBar = $('strengthBar');
+  const strengthLabel = $('strengthLabel');
+  const strengthSection = $('strengthSection');
+  const entropyValue = $('entropyValue');
+  const charsetSize = $('charsetSize');
+  const historyList = $('historyList');
+  const clearHistoryBtn = $('clearHistory');
+  const themeToggle = $('themeToggle');
 
-                <div class="output">
-                    <div class="password-display" id="output">
-                        Generate a password
-                    </div>
-                </div>
+  const HISTORY_KEY = 'omnipass_history';
+  const SETTINGS_KEY = 'omnipass_settings';
+  const MAX_HISTORY = 10;
 
-                <div class="status" id="status"></div>
+  let currentPassword = '';
+  let genPending = false;
 
-                <div class="button-group">
-                    <button class="btn-generate" id="generate">Generate</button>
-                    <button class="btn-copy" id="copy">Copy</button>
-                </div>
-            </div>
+  function saveSettings() {
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify({
+      length: parseInt(lengthInput.value),
+      arabic: arabicCheck.checked,
+    }));
+  }
 
-            <div class="footer">
-                <div class="footer-text">
-                    Built by github.com/abdulrahmaninfra | Frontend just a
-                    AI-SLOP
-                </div>
-                <div class="social">
-                    <a
-                        href="https://github.com/abdulrahmaninfra"
-                        target="_blank"
-                        >GitHub</a
-                    >
-                    <a
-                        href="https://github.com/abdulrahmaninfra/omnipass"
-                        target="_blank"
-                        >Repo</a
-                    >
-                </div>
-            </div>
-        </div>
+  function loadSettings() {
+    try {
+      const raw = localStorage.getItem(SETTINGS_KEY);
+      if (!raw) return;
+      const s = JSON.parse(raw);
+      if (s.length) lengthInput.value = s.length;
+      arabicCheck.checked = s.arabic !== false;
+    } catch {}
+    arabicChip.classList.toggle('active', arabicCheck.checked);
+  }
 
-        <script>
-            const API_BASE = "https://omnipass-mu.vercel.app/generate";
-            const output = document.getElementById("output");
-            const status = document.getElementById("status");
-            const generateBtn = document.getElementById("generate");
-            const copyBtn = document.getElementById("copy");
-            const lengthInput = document.getElementById("length");
-            const arabicCheck = document.getElementById("arabic");
-            const numbersCheck = document.getElementById("numbers");
+  function getTheme() {
+    return localStorage.getItem('omnipass_theme') || 'dark';
+  }
 
-            async function generate() {
-                const len = lengthInput.value || 16;
-                const ar = arabicCheck.checked;
-                const nums = numbersCheck.checked;
+  function setTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('omnipass_theme', theme);
+    themeToggle.innerHTML = theme === 'dark' ? '&#9788;' : '&#9790;';
+  }
 
-                const params = new URLSearchParams({
-                    length: len,
-                    include_arabic: ar,
-                    include_numbers: nums,
-                });
+  function initTheme() {
+    const saved = getTheme();
+    const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+    setTheme(saved === 'auto' ? (prefersLight ? 'light' : 'dark') : saved);
+  }
 
-                try {
-                    const res = await fetch(`${API_BASE}?${params}`);
-                    const data = await res.json();
-                    output.textContent = data.password;
-                    status.textContent = "";
-                } catch (e) {
-                    output.textContent = "Error generating password";
-                    status.textContent = "Failed to reach API";
-                    status.style.color = "#8a4a4a";
-                }
-            }
+  themeToggle.addEventListener('click', () => {
+    const current = document.documentElement.getAttribute('data-theme');
+    setTheme(current === 'dark' ? 'light' : 'dark');
+  });
 
-            function copy() {
-                const pwd = output.textContent;
-                if (
-                    pwd &&
-                    pwd !== "Generate a password" &&
-                    pwd !== "Error generating password"
-                ) {
-                    navigator.clipboard.writeText(pwd).then(() => {
-                        status.textContent = "Copied!";
-                        status.classList.add("success");
-                        copyBtn.classList.add("copied");
-                        setTimeout(() => {
-                            status.textContent = "";
-                            status.classList.remove("success");
-                            copyBtn.classList.remove("copied");
-                        }, 2000);
-                    });
-                }
-            }
+  function analyzePassword(pwd) {
+    let latin = 0, arabic = 0, nums = 0, syms = 0;
+    for (const ch of pwd) {
+      const code = ch.codePointAt(0);
+      if (code >= 0x0600 && code <= 0x06FF) {
+        arabic++;
+      } else if (/[a-zA-Z]/.test(ch)) {
+        latin++;
+      } else if (/[0-9]/.test(ch)) {
+        nums++;
+      } else {
+        syms++;
+      }
+    }
+    return { latin, arabic, nums, syms };
+  }
 
-            generateBtn.addEventListener("click", generate);
-            copyBtn.addEventListener("click", copy);
-            lengthInput.addEventListener(
-                "keypress",
-                (e) => e.key === "Enter" && generate(),
-            );
+  function colorizePassword(pwd) {
+    let html = '';
+    for (const ch of pwd) {
+      const code = ch.codePointAt(0);
+      if (code >= 0x0600 && code <= 0x06FF) {
+        html += `<span class="ar-char">${ch}</span>`;
+      } else if (/[a-zA-Z]/.test(ch)) {
+        html += `<span class="latin-char">${ch}</span>`;
+      } else if (/[0-9]/.test(ch)) {
+        html += `<span class="num-char">${ch}</span>`;
+      } else {
+        html += `<span class="sym-char">${ch}</span>`;
+      }
+    }
+    return html;
+  }
 
-            generate();
-        </script>
-    </body>
+  function getCharsetSize(ar) {
+    let size = 26 + 26 + 10 + 32;
+    if (ar) size += 48;
+    return size;
+  }
+
+  function calcEntropy(length, charsetSize) {
+    return (length * Math.log2(charsetSize)).toFixed(1);
+  }
+
+  function getStrengthLabel(bits) {
+    if (bits < 40) return { label: 'Weak', cls: 'weak' };
+    if (bits < 60) return { label: 'Fair', cls: 'fair' };
+    if (bits < 80) return { label: 'Good', cls: 'good' };
+    if (bits < 100) return { label: 'Strong', cls: 'strong' };
+    return { label: 'Very Strong', cls: 'very-strong' };
+  }
+
+  function updateInfo(pwd) {
+    const len = parseInt(lengthInput.value);
+    const ar = arabicCheck.checked;
+    const cs = getCharsetSize(ar);
+    const bits = calcEntropy(len, cs);
+    const strength = getStrengthLabel(parseFloat(bits));
+
+    charsetSize.textContent = cs;
+    entropyValue.textContent = bits;
+
+    strengthBar.className = 'strength-bar ' + strength.cls;
+    strengthLabel.textContent = strength.label;
+    strengthLabel.className = 'strength-label ' + strength.cls;
+
+    const analysis = analyzePassword(pwd);
+    latinCount.textContent = analysis.latin;
+    arabicCount.textContent = analysis.arabic;
+    numCount.textContent = analysis.nums;
+    symCount.textContent = analysis.syms;
+    charBreakdown.style.display = 'flex';
+    strengthSection.style.display = 'flex';
+  }
+
+  function updateSlider() {
+    const val = lengthInput.value;
+    const min = lengthInput.min || 8;
+    const max = lengthInput.max || 128;
+    const pct = ((val - min) / (max - min)) * 100;
+    lengthInput.style.background =
+      `linear-gradient(to right, var(--accent) ${pct}%, var(--border) ${pct}%)`;
+    lengthDisplay.textContent = val;
+  }
+
+  let sliderTimeout;
+  lengthInput.addEventListener('input', () => {
+    updateSlider();
+    saveSettings();
+    clearTimeout(sliderTimeout);
+    sliderTimeout = setTimeout(generate, 150);
+  });
+
+  updateSlider();
+
+  async function generate() {
+    if (genPending) return;
+    genPending = true;
+
+    const len = parseInt(lengthInput.value);
+    const ar = arabicCheck.checked;
+
+    const params = new URLSearchParams({
+      length: len,
+      include_arabic: ar,
+    });
+
+    try {
+      const res = await fetch(`${API_BASE}?${params}`);
+      const data = await res.json();
+      currentPassword = data.password;
+
+      const pwdSpan = document.createElement('span');
+      pwdSpan.className = 'password-text';
+      pwdSpan.innerHTML = colorizePassword(data.password);
+      output.innerHTML = '';
+      output.appendChild(pwdSpan);
+
+      output.className = 'password-display' + (ar ? ' glow-warm' : ' glow');
+
+      updateInfo(data.password);
+      status.textContent = '';
+      status.className = 'status';
+
+      addToHistory(data.password);
+    } catch (e) {
+      output.innerHTML = '<span class="placeholder">Error generating password</span>';
+      output.className = 'password-display';
+      status.textContent = 'Failed to reach API';
+      status.className = 'status error flash';
+      charBreakdown.style.display = 'none';
+      strengthSection.style.display = 'none';
+      charsetSize.textContent = '--';
+      entropyValue.textContent = '--';
+    } finally {
+      genPending = false;
+    }
+  }
+
+  function copy() {
+    if (!currentPassword) return;
+    navigator.clipboard.writeText(currentPassword).then(() => {
+      status.textContent = 'Copied!';
+      status.className = 'status success flash';
+      copyBtn.classList.add('copied');
+      copyBtn.innerHTML = '<span class="icon">&#10003;</span> Copied';
+      setTimeout(() => {
+        status.textContent = '';
+        status.className = 'status';
+        copyBtn.classList.remove('copied');
+        copyBtn.innerHTML = '<span class="icon">&#128203;</span> Copy';
+      }, 2000);
+    });
+  }
+
+  function getHistory() {
+    try {
+      return JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+    } catch { return []; }
+  }
+
+  function addToHistory(pwd) {
+    let history = getHistory();
+    history = history.filter(h => h !== pwd);
+    history.unshift(pwd);
+    if (history.length > MAX_HISTORY) history = history.slice(0, MAX_HISTORY);
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+    renderHistory();
+  }
+
+  function renderHistory() {
+    const history = getHistory();
+    if (history.length === 0) {
+      historyList.innerHTML = '<div class="history-empty">No passwords yet</div>';
+      return;
+    }
+    historyList.innerHTML = history.map(pwd =>
+      `<div class="history-item" data-pwd="${pwd.replace(/"/g, '&quot;')}">
+        <span class="h-entry">${pwd}</span>
+        <span class="h-copy">&#128203;</span>
+      </div>`
+    ).join('');
+
+    historyList.querySelectorAll('.history-item').forEach(el => {
+      el.addEventListener('click', () => {
+        const pwd = el.dataset.pwd;
+        navigator.clipboard.writeText(pwd).then(() => {
+          status.textContent = 'Copied from history!';
+          status.className = 'status success flash';
+          setTimeout(() => {
+            status.textContent = '';
+            status.className = 'status';
+          }, 1500);
+        });
+      });
+    });
+  }
+
+  clearHistoryBtn.addEventListener('click', () => {
+    localStorage.removeItem(HISTORY_KEY);
+    renderHistory();
+    status.textContent = 'History cleared';
+    status.className = 'status flash';
+    setTimeout(() => { status.textContent = ''; status.className = 'status'; }, 1500);
+  });
+
+  arabicCheck.addEventListener('change', () => {
+    arabicChip.classList.toggle('active', arabicCheck.checked);
+    saveSettings();
+    generate();
+  });
+
+  copyBtn.addEventListener('click', copy);
+
+  initTheme();
+  loadSettings();
+  updateSlider();
+  renderHistory();
+  generate();
+</script>
+</body>
 </html>

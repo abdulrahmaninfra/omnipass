@@ -1,194 +1,320 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --bg-input: #1e1e1e;
+      --text: #e8e8e8;
+      --text-secondary: #888;
+      --text-muted: #555;
+      --border: #222;
+      --border-focus: #444;
+      --accent: #4a9eff;
+      --accent-glow: rgba(74,158,255,0.25);
+      --accent-warm: #ff9a4a;
+      --accent-warm-glow: rgba(255,154,74,0.2);
+      --success: #4caf50;
+      --success-bg: rgba(76,175,80,0.15);
+      --radius-sm: 8px;
+    }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      width: 360px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .popup { padding: 20px; }
 
-        body {
-            width: 320px;
-            background: #0a0a0a;
-            color: #e0e0e0;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            font-size: 13px;
-        }
+    .header { margin-bottom: 16px; }
+    .title {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+    .subtitle {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
 
-        .arabic-text {
-            line-height: 1.8;
-            font-family: 'Cairo', sans-serif;
-            text-rendering: optimizeLegibility;
-        }
+    .password-display {
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      font-family: 'Monaco', 'Menlo', 'Cairo', monospace;
+      font-size: 14px;
+      word-break: break-all;
+      line-height: 1.8;
+      min-height: 60px;
+      color: var(--text);
+      transition: all 0.3s;
+      margin-bottom: 12px;
+    }
+    .password-display.glow {
+      box-shadow: 0 0 20px var(--accent-glow);
+      border-color: var(--accent);
+    }
+    .password-display.glow-warm {
+      box-shadow: 0 0 20px var(--accent-warm-glow);
+      border-color: var(--accent-warm);
+    }
+    .password-display .placeholder {
+      color: var(--text-muted);
+      font-family: 'Inter', sans-serif;
+    }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(6px); filter: blur(3px); }
+      to { opacity: 1; transform: translateY(0); filter: blur(0); }
+    }
+    .password-display .password-text {
+      animation: slideIn 0.3s ease-out;
+    }
+    .password-display .password-text .ar-char { color: var(--accent-warm); }
+    .password-display .password-text .latin-char { color: var(--accent); }
+    .password-display .password-text .num-char { color: var(--success); }
+    .password-display .password-text .sym-char { color: var(--text-secondary); }
 
-        .popup {
-            padding: 20px;
-        }
+    .char-breakdown {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+    .char-count {
+      font-size: 11px;
+      color: var(--text-secondary);
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .char-count .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .char-count .dot.ar { background: var(--accent-warm); }
+    .char-count .dot.latin { background: var(--accent); }
+    .char-count .dot.num { background: var(--success); }
+    .char-count .dot.sym { background: var(--text-muted); }
+    .char-count .count { font-weight: 700; color: var(--text); }
 
-        .title {
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 16px;
-            letter-spacing: -0.3px;
-        }
+    .slider-group { margin-bottom: 16px; }
+    .slider-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .slider-header label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+    .slider-value {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--accent);
+      font-variant-numeric: tabular-nums;
+    }
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: var(--border);
+      outline: none;
+      cursor: pointer;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--bg-input);
+      border: 2px solid var(--accent);
+      cursor: pointer;
+      box-shadow: 0 0 10px var(--accent-glow);
+    }
+    input[type="range"]::-moz-range-thumb {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--bg-input);
+      border: 2px solid var(--accent);
+      cursor: pointer;
+    }
 
-        .form-group {
-            margin-bottom: 12px;
-        }
+    .option-chip {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 12px;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.25s;
+      user-select: none;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+    .option-chip:hover { border-color: var(--border-focus); }
+    .option-chip.active {
+      border-color: var(--accent-warm);
+      background: var(--accent-warm-glow);
+      color: var(--accent-warm);
+    }
+    .option-chip input[type="checkbox"] { display: none; }
 
-        label {
-            display: block;
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 0.4px;
-            color: #888;
-            margin-bottom: 6px;
-        }
+    .bottom-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .copy-wrap {
+      flex-shrink: 0;
+    }
+    .btn-copy {
+      padding: 12px 24px;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s;
+      font-family: inherit;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: var(--bg-input);
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+    }
+    .btn-copy:hover {
+      border-color: var(--border-focus);
+      color: var(--text);
+    }
+    .btn-copy.copied {
+      background: var(--success-bg);
+      border-color: var(--success);
+      color: var(--success);
+    }
+    .strength-tag {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+    .strength-tag.weak { color: #ef5350; }
+    .strength-tag.fair { color: #ff9800; }
+    .strength-tag.good { color: #ffc107; }
+    .strength-tag.strong { color: #8bc34a; }
+    .strength-tag.very-strong { color: var(--success); }
 
-        input[type="number"] {
-            width: 100%;
-            padding: 8px 10px;
-            background: #1a1a1a;
-            border: 1px solid #2a2a2a;
-            color: #e0e0e0;
-            font-size: 13px;
-            border-radius: 3px;
-            font-family: inherit;
-        }
+    .status {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-align: center;
+      min-height: 20px;
+      margin-top: 10px;
+      transition: all 0.3s;
+    }
+    .status.success { color: var(--success); }
+    .status.error { color: var(--error); }
+    @keyframes pulseFade {
+      0% { opacity: 0; transform: scale(0.95); }
+      20% { opacity: 1; transform: scale(1); }
+      80% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+    .status.flash { animation: pulseFade 1.5s ease-out; }
 
-        input[type="number"]:focus {
-            outline: none;
-            border-color: #555;
-        }
+    .footer {
+      text-align: center;
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+    }
+    .footer a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 11px;
+      transition: color 0.2s;
+    }
+    .footer a:hover { color: var(--text-secondary); }
 
-        .checkbox-group {
-            display: flex;
-            gap: 12px;
-        }
-
-        .checkbox-item {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            cursor: pointer;
-            font-size: 12px;
-        }
-
-        input[type="checkbox"] {
-            width: 14px;
-            height: 14px;
-            cursor: pointer;
-            accent-color: #666;
-        }
-
-        .output {
-            margin: 16px 0;
-        }
-
-        .password-display {
-            background: #1a1a1a;
-            border: 1px solid #2a2a2a;
-            padding: 10px;
-            border-radius: 3px;
-            font-family: 'Monaco', monospace;
-            font-size: 11px;
-            word-break: break-all;
-            line-height: 1.6;
-            min-height: 50px;
-            color: #999;
-        }
-
-        .buttons {
-            display: flex;
-            gap: 8px;
-        }
-
-        button {
-            flex: 1;
-            padding: 8px 10px;
-            border: none;
-            border-radius: 3px;
-            font-size: 12px;
-            font-weight: 500;
-            cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-            transition: all 0.2s;
-        }
-
-        .btn-gen {
-            background: #222;
-            color: #e0e0e0;
-            border: 1px solid #444;
-        }
-
-        .btn-gen:hover {
-            background: #333;
-        }
-
-        .btn-copy {
-            background: #333;
-            color: #e0e0e0;
-            border: 1px solid #555;
-        }
-
-        .btn-copy:hover {
-            background: #444;
-        }
-
-        .status {
-            font-size: 11px;
-            color: #666;
-            text-align: center;
-            margin-top: 8px;
-            min-height: 16px;
-        }
-
-        .status.ok {
-            color: #6a9a6a;
-        }
-    </style>
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="popup">
-        <div class="title">\OmniPass</div>
-
-        <div class="form-group">
-            <label>Length</label>
-            <input type="number" id="length" min="8" max="128" value="16">
-        </div>
-
-        <div class="form-group">
-            <label>Options</label>
-            <div class="checkbox-group">
-                <label class="checkbox-item">
-                    <input type="checkbox" id="arabic" checked>
-                    <span>Arabic</span>
-                </label>
-                <label class="checkbox-item">
-                    <input type="checkbox" id="numbers" checked>
-                    <span>Numbers</span>
-                </label>
-            </div>
-        </div>
-
-        <div class="output">
-            <div class="password-display" id="output">Generate</div>
-        </div>
-
-        <div class="buttons">
-            <button class="btn-gen" id="generate">Generate</button>
-            <button class="btn-copy" id="copy">Copy</button>
-        </div>
-
-        <div class="status" id="status"></div>
+  <div class="popup">
+    <div class="header">
+      <div class="title">OmniPass</div>
+      <div class="subtitle">Bilingual Password Generator</div>
     </div>
 
-    <script src="popup.js"></script>
+    <div class="password-display" id="output">
+      <span class="placeholder">Generate a password</span>
+    </div>
+    <div class="char-breakdown" id="charBreakdown" style="display:none">
+      <span class="char-count"><span class="dot latin"></span> Latin <span class="count" id="latinCount">0</span></span>
+      <span class="char-count"><span class="dot ar"></span> Arabic <span class="count" id="arabicCount">0</span></span>
+      <span class="char-count"><span class="dot num"></span> Num <span class="count" id="numCount">0</span></span>
+      <span class="char-count"><span class="dot sym"></span> Sym <span class="count" id="symCount">0</span></span>
+    </div>
+
+    <div class="slider-group">
+      <div class="slider-header">
+        <label for="length">Length</label>
+        <span class="slider-value" id="lengthDisplay">16</span>
+      </div>
+      <input type="range" id="length" min="8" max="128" value="16" />
+    </div>
+
+    <div>
+      <label class="option-chip active arabic-chip" id="arabicChip" style="width:100%">
+        <input type="checkbox" id="arabic" checked />
+        <span>&#1608;</span> Arabic
+      </label>
+    </div>
+
+    <div class="bottom-row">
+      <div class="copy-wrap">
+        <button class="btn-copy" id="copy"><span class="icon">&#128203;</span> Copy</button>
+      </div>
+      <span class="strength-tag" id="strengthDisplay"></span>
+    </div>
+
+    <div class="status" id="status"></div>
+
+    <div class="footer">
+      <a href="https://github.com/abdulrahmaninfra/omnipass" target="_blank">&#128279; omnipass</a>
+    </div>
+  </div>
+  <script src="popup.js"></script>
 </body>
 </html>
