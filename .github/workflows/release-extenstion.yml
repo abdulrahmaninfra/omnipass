@@ -1,5 +1,6 @@
 name: "Release OmniPass Extension"
 on:
+  workflow_dispatch:
   push:
     tags:
       - "v-ex-*"
