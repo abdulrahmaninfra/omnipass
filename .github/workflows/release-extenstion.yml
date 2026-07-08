@@ -25,7 +25,7 @@ jobs:
       - name: Zip Extension
         run: |
           cd frontend
-          cd extension
+          cd extenstion
           zip -r omnipass_extension.zip .
 
       - name: Create a Github Release
