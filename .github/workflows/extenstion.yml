@@ -1,5 +1,4 @@
 name: "Release OmniPass Extension"
-
 on:
   push:
     tags:
@@ -10,7 +9,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
@@ -20,10 +18,9 @@ jobs:
           cd frontend/extension
           zip -r omnipass_extension.zip .
 
-      - name: Upload Release Asset
-        uses: actions/upload-release-asset@v1
+      - name: Create a Github Release
+        uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ github.ref }}
-          asset_path: frontend/extension/omnipass_extension.zip
-          asset_name: omnipass_extension.zip
-          asset_content_type: application/zip
+          name: Extension Release ${{ github.ref_name }}
+          files: frontend/extension/omnipass_extension.zip
+          generate_release_notes: true
