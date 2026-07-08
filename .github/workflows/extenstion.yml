@@ -13,6 +13,15 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v4
 
+      - name: Debug - Show Directory Structure
+        run: |
+          echo "Current directory:"
+          pwd
+          echo -e "\nRepo structure:"
+          ls -la
+          echo -e "\nLooking for extension directories:"
+          find . -type d -name "*extension*" 2>/dev/null
+
       - name: Zip Extension
         run: |
           cd frontend/extension
