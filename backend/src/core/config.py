@@ -7,8 +7,9 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env")
 
     API_TITLE: str = "OmniPass"
-    API_DESCRIPTION: str = "A password generator with Arabic letter and tashkeel support""
-
+    API_DESCRIPTION: str = (
+        "A password generator with Arabic letter and tashkeel support"
+    )
 
     API_VERSION: str = "1.1.0"
 
