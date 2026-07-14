@@ -21,6 +21,7 @@ def create_application() -> FastAPI:
         allow_credentials=True,
         allow_methods=settings.ALLOWED_METHODS,
         allow_headers=["*"],
+        max_age=86400,
     )
 
     application.include_router(password_router)
