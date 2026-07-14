@@ -844,6 +844,7 @@
 
   let currentPassword = '';
   let genPending = false;
+  let currentController = null;
 
   function saveSettings() {
     localStorage.setItem(SETTINGS_KEY, JSON.stringify({
@@ -980,7 +981,13 @@
   updateSlider();
 
   async function generate() {
-    if (genPending) return;
+    // Cancel any previous in-flight request before starting a new one
+    if (currentController) {
+      currentController.abort();
+    }
+    currentController = new AbortController();
+    const signal = currentController.signal;
+
     genPending = true;
 
     const len = parseInt(lengthInput.value);
@@ -992,7 +999,11 @@
     });
 
     try {
-      const res = await fetch(`${API_BASE}?${params}`);
+      const res = await fetch(`${API_BASE}?${params}`, {
+        signal,
+        keepalive: true,
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       currentPassword = data.password;
 
@@ -1010,6 +1021,7 @@
 
       addToHistory(data.password);
     } catch (e) {
+      if (e.name === 'AbortError') return; // stale request — user already triggered a newer one
       output.innerHTML = '<span class="placeholder">Error generating password</span>';
       output.className = 'password-display';
       status.textContent = 'Failed to reach API';
