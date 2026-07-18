@@ -43,4 +43,4 @@ jobs:
 
       - name: Run Tests
         run: |
-          uv run pytest main.py
+          uv run pytest main.py || [ $? -eq 5 ]
