@@ -1,8 +1,21 @@
+from contextlib import asynccontextmanager
+
+import httpx
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 from src.api.routes.password import router as password_router
 from src.core.config import get_settings
+
+
+@asynccontextmanager
+async def lifespan(application: FastAPI):
+    application.state.http_client = httpx.AsyncClient(
+        timeout=5.0,
+        limits=httpx.Limits(max_connections=100, max_keepalive_connections=20),
+    )
+    yield
+    await application.state.http_client.aclose()
 
 
 def create_application() -> FastAPI:
@@ -12,6 +25,7 @@ def create_application() -> FastAPI:
         title=settings.API_TITLE,
         description=settings.API_DESCRIPTION,
         version=settings.API_VERSION,
+        lifespan=lifespan,
     )
 
     application.add_middleware(GZipMiddleware, minimum_size=1000)
@@ -40,4 +54,5 @@ if __name__ == "__main__":
         "main:app",
         host=settings.HOST,
         port=settings.PORT,
+        timeout_keep_alive=5,
     )
