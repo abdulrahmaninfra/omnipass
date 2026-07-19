@@ -13,7 +13,7 @@ class Settings(BaseSettings):
 
     API_VERSION: str = "1.1.0"
 
-    ALLOWED_ORIGINS: list[str] = ["*"]
+    ALLOWED_ORIGINS: list[str] = ["https://omnipass-mu.vercel.app/"]
     ALLOWED_METHODS: list[str] = ["GET"]
     MIN_PASSWORD_LENGTH: int = 8
     MAX_PASSWORD_LENGTH: int = 256

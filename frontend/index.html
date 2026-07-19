@@ -756,7 +756,10 @@
     </div>
   </section>
 
-  <div style="text-align:center">
+  <div style="text-align:center; display: flex; justify-content: center; gap: 12px;">
+    <button class="btn-copy" id="regenerate">
+      <span class="icon">&#128260;</span> Regenerate
+    </button>
     <button class="btn-copy" id="copy">
       <span class="icon">&#128203;</span> Copy
     </button>
@@ -819,6 +822,7 @@
   const $ = id => document.getElementById(id);
   const output = $('output');
   const status = $('status');
+  const regenerateBtn = $('regenerate');
   const copyBtn = $('copy');
   const lengthInput = $('length');
   const lengthDisplay = $('lengthDisplay');
@@ -1108,6 +1112,7 @@
     generate();
   });
 
+  regenerateBtn.addEventListener('click', generate);
   copyBtn.addEventListener('click', copy);
 
   initTheme();

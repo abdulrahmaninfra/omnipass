@@ -3,6 +3,7 @@ const API_BASE = "https://omnipass-mu.vercel.app/generate";
 const $ = (id) => document.getElementById(id);
 const output = $("output");
 const status = $("status");
+const regenerateBtn = $("regenerate");
 const copyBtn = $("copy");
 const lengthInput = $("length");
 const lengthDisplay = $("lengthDisplay");
@@ -202,6 +203,7 @@ arabicCheck.addEventListener("change", () => {
   generate();
 });
 
+regenerateBtn.addEventListener("click", generate);
 copyBtn.addEventListener("click", copy);
 
 loadSettings();
