@@ -1,0 +1,46 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - refactoring
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.14.6"
+
+      - name: Install UV
+        uses: astral-sh/setup-uv@v5
+
+      - name: Create Virtual Environment
+        run: uv venv
+
+      - name: Install Dependencies
+        run: |
+          uv pip install -r requirements.txt
+          uv pip install pytest ruff mypy
+
+      - name: Lint and Format with Ruff
+        run: |
+          uv run ruff check .
+          # uv run ruff format --check .
+
+      - name: Type Check with MyPy
+        run: uv run mypy src
+
+      - name: Run Tests
+        run: |
+          uv run pytest main.py || [ $? -eq 5 ]
