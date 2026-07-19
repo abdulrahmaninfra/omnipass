@@ -2,8 +2,8 @@ import secrets
 
 from fastapi import HTTPException
 
-from src.core.config import get_settings
-from src.core.constants import CharacterSet
+from .config import get_settings
+from .constants import CharacterSet
 
 
 class PasswordGenerator:
