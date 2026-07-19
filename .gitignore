@@ -3,4 +3,6 @@ refactoring.md
 .mypy_cache/
 .pytest_cache/
 .ruff_cache/
+branch_comparison.md
 __pycache__/
+.gitignore

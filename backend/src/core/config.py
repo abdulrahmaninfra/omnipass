@@ -11,7 +11,7 @@ class Settings(BaseSettings):
         "A password generator with Arabic letter and tashkeel support"
     )
 
-    API_VERSION: str = "1.1.0"
+    API_VERSION: str = "1.2.0"
 
     ALLOWED_ORIGINS: list[str] = ["https://omnipass-mu.vercel.app/"]
     ALLOWED_METHODS: list[str] = ["GET"]
