@@ -7,7 +7,6 @@ if project_root not in sys.path:
 
 from contextlib import asynccontextmanager
 
-import httpx
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
@@ -18,12 +17,7 @@ from backend.src.core.config import get_settings
 
 @asynccontextmanager
 async def lifespan(application: FastAPI):
-    application.state.http_client = httpx.AsyncClient(
-        timeout=5.0,
-        limits=httpx.Limits(max_connections=100, max_keepalive_connections=20),
-    )
     yield
-    await application.state.http_client.aclose()
 
 
 def create_application() -> FastAPI:
