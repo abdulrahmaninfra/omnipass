@@ -1,11 +1,19 @@
+import sys
+from pathlib import Path
+
+project_root = str(Path(__file__).resolve().parent.parent)
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
+
 from contextlib import asynccontextmanager
 
 import httpx
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
-from src.api.routes.password import router as password_router
-from src.core.config import get_settings
+
+from backend.src.api.routes.password import router as password_router
+from backend.src.core.config import get_settings
 
 
 @asynccontextmanager
