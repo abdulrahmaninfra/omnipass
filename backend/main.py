@@ -4,8 +4,9 @@ import httpx
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
-from src.api.routes.password import router as password_router
-from src.core.config import get_settings
+
+from backend.src.api.routes.password import router as password_router
+from backend.src.core.config import get_settings
 
 
 @asynccontextmanager
