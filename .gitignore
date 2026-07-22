@@ -6,3 +6,5 @@ refactoring.md
 branch_comparison.md
 __pycache__/
 .gitignore
+deploy.sh
+.secrets
