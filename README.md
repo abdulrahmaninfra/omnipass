@@ -3,7 +3,7 @@
 # OmniPass
 
 **A password generator with Arabic letter and tashkeel support**
-s
+
 ![License](https://img.shields.io/badge/license-MIT-blue)
 ![Python](https://img.shields.io/badge/python-3.14+-blue)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.139-blue)

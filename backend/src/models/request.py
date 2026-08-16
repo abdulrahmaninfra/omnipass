@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 
-from src.core.config import get_settings
+from ..core.config import get_settings
 
 
 _settings = get_settings()

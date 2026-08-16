@@ -1,18 +1,18 @@
 services:
   backend:
-    image: abdelrahmaninfra/omnipass:backend
+    build:
+      context: ..
+      dockerfile: src/Dockerfile
+    image: ${DOCKERHUB_USERNAME:-username}/omnipass-backend:latest
     container_name: omnipass-backend
-    build: ./backend
     ports:
       - "8000:8000"
-    env_file:
-      - ./backend/.env
     restart: unless-stopped
+
   frontend:
-    image: abdelrahmaninfra/omnipass:frontend
-    container_name: omnipass-frontend
-    build: ./frontend
-    depends_on:
-      - backend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: ${DOCKERHUB_USERNAME:-username}/omnipass-frontend:latest
     ports:
       - "80:80"
