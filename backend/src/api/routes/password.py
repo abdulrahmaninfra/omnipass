@@ -1,31 +1,25 @@
-from fastapi import APIRouter, Depends, HTTPException, Query, Request
-from fastapi.responses import RedirectResponse
-
-from ...core.generation import PasswordGenerator
-from ...models.response import PasswordResponse
-
+from fastapi import APIRouter, HTTPException, Request, status
+from src.core.generation import PasswordGenerator
+from src.models.response import PasswordResponse
+from src.models.request import PasswordGenerateRequest
 router = APIRouter(tags=["Password"])
 
 
-@router.get("/generate", response_model=PasswordResponse)
-def getPassword(
-    request: Request,
-    length: int = Query(16, ge=8, le=256, description="Password Length"),
-    include_arabic: bool = Query(False, description="Include Arabic Characters"),
-):
+@router.post("/generate", response_model=PasswordResponse)
+def generate_password(payload: PasswordGenerateRequest):
 
-    if not request.query_params:
-        return RedirectResponse(url="/generate?length=16&include_arabic=False")
-    try:
-        generator = PasswordGenerator(length, include_arabic)
-        password = generator.generate()
+    try: 
+        generation = PasswordGenerator(**payload.model_dump())
+        password = generation.generate()
 
-        return PasswordResponse(
-            password=password, length=length, includes_arabic=include_arabic
+        return PasswordResponse(password = password, **payload.model_dump())
+
+    except (HTTPException, ValueError):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid request parameters",
         )
 
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
 
-    except Exception:
-        raise HTTPException(500, detail="Internal server error")
+    
+
