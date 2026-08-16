@@ -1,9 +1,9 @@
 [project]
-name = "backend"
-version = "0.1.0"
+name = "OmniPass"
+version = "0.2.1"
 description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 dependencies = [
     "fastapi[standard]==0.139.0",
     "httpx==0.28.1",
