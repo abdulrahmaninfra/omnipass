@@ -14,8 +14,8 @@
       --bg-card-hover: #1a1a1a;
       --bg-input: #1e1e1e;
       --text: #e8e8e8;
-      --text-secondary: #888;
-      --text-muted: #555;
+      --text-secondary: #9a9a9a;
+      --text-muted: #8a8a8a;
       --border: #222;
       --border-focus: #444;
       --accent: #4a9eff;
@@ -28,6 +28,10 @@
       --shadow: 0 0 40px rgba(0,0,0,0.4);
       --radius: 12px;
       --radius-sm: 8px;
+      --strength-weak: #ef5350;
+      --strength-fair: #ffa726;
+      --strength-good: #ffd54f;
+      --strength-strong: #9ccc65;
     }
     [data-theme="light"] {
       --bg: #f0f2f5;
@@ -47,6 +51,10 @@
       --success-bg: rgba(22,163,74,0.1);
       --error: #dc2626;
       --shadow: 0 0 40px rgba(0,0,0,0.06);
+      --strength-weak: #d32f2f;
+      --strength-fair: #ef6c00;
+      --strength-good: #a16207;
+      --strength-strong: #4d7c0f;
     }
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -71,8 +79,8 @@
       background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: 50%;
-      width: 40px;
-      height: 40px;
+      width: 44px;
+      height: 44px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -86,6 +94,17 @@
       color: var(--accent);
       box-shadow: 0 0 20px var(--accent-glow);
     }
+    .theme-toggle:focus-visible,
+    .btn-copy:focus-visible,
+    .option-chip:focus-within,
+    .clear-btn:focus-visible,
+    .footer-links a:focus-visible,
+    .footer-text a:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+      border-radius: 6px;
+    }
+    .theme-toggle:focus-visible { border-radius: 50%; }
 
     .container {
       max-width: 480px;
@@ -169,11 +188,11 @@
       overflow: hidden;
     }
     .password-display.glow {
-      box-shadow: 0 0 30px var(--accent-glow), inset 0 0 30px rgba(74,158,255,0.03);
+      box-shadow: 0 0 20px var(--accent-glow), inset 0 0 24px rgba(74,158,255,0.03);
       border-color: var(--accent);
     }
     .password-display.glow-warm {
-      box-shadow: 0 0 30px var(--accent-warm-glow), inset 0 0 30px rgba(255,154,74,0.03);
+      box-shadow: 0 0 20px var(--accent-warm-glow), inset 0 0 24px rgba(255,154,74,0.03);
       border-color: var(--accent-warm);
     }
     .password-display .placeholder {
@@ -246,15 +265,17 @@
     }
     .strength-bar {
       height: 100%;
+      width: 100%;
       border-radius: 2px;
-      transition: width 0.5s ease, background 0.5s ease;
-      width: 0%;
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform 0.5s ease, background 0.5s ease;
     }
-    .strength-bar.weak { background: #ef5350; width: 20%; }
-    .strength-bar.fair { background: #ff9800; width: 40%; }
-    .strength-bar.good { background: #ffc107; width: 60%; }
-    .strength-bar.strong { background: #8bc34a; width: 80%; }
-    .strength-bar.very-strong { background: var(--success); width: 100%; }
+    .strength-bar.weak { background: var(--strength-weak); transform: scaleX(0.2); }
+    .strength-bar.fair { background: var(--strength-fair); transform: scaleX(0.4); }
+    .strength-bar.good { background: var(--strength-good); transform: scaleX(0.6); }
+    .strength-bar.strong { background: var(--strength-strong); transform: scaleX(0.8); }
+    .strength-bar.very-strong { background: var(--success); transform: scaleX(1); }
     .strength-label {
       font-size: 11px;
       font-weight: 600;
@@ -264,10 +285,10 @@
       min-width: 70px;
       text-align: right;
     }
-    .strength-label.weak { color: #ef5350; }
-    .strength-label.fair { color: #ff9800; }
-    .strength-label.good { color: #ffc107; }
-    .strength-label.strong { color: #8bc34a; }
+    .strength-label.weak { color: var(--strength-weak); }
+    .strength-label.fair { color: var(--strength-fair); }
+    .strength-label.good { color: var(--strength-good); }
+    .strength-label.strong { color: var(--strength-strong); }
     .strength-label.very-strong { color: var(--success); }
 
     .controls { margin-top: 20px; }
@@ -306,6 +327,11 @@
       outline: none;
       transition: background 0.1s;
       cursor: pointer;
+    }
+    input[type="range"]:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 4px;
+      border-radius: 4px;
     }
     input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none;
@@ -567,9 +593,11 @@
       background: none;
       border: none;
       color: var(--text-muted);
-      font-size: 11px;
+      font-size: 12px;
       cursor: pointer;
-      padding: 0;
+      padding: 8px 12px;
+      min-height: 36px;
+      border-radius: 6px;
       font-family: inherit;
       transition: color 0.2s;
     }
@@ -585,7 +613,8 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      padding: 8px 12px;
+      padding: 10px 12px;
+      min-height: 44px;
       background: var(--bg-input);
       border: 1px solid var(--border);
       border-radius: 6px;
@@ -593,10 +622,18 @@
       transition: all 0.2s;
       font-family: 'Monaco', 'Menlo', monospace;
       font-size: 12px;
+      width: 100%;
+      text-align: left;
+      color: inherit;
     }
-    .history-item:hover {
+    .history-item:hover,
+    .history-item:focus-visible {
       border-color: var(--accent);
       background: var(--accent-glow);
+    }
+    .history-item:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
     }
     .history-item .h-entry {
       flex: 1;
@@ -608,10 +645,11 @@
     .history-item .h-copy {
       font-size: 14px;
       color: var(--text-muted);
-      opacity: 0;
+      opacity: 0.45;
       transition: opacity 0.2s;
     }
-    .history-item:hover .h-copy {
+    .history-item:hover .h-copy,
+    .history-item:focus-visible .h-copy {
       opacity: 1;
     }
     .history-empty {
@@ -690,7 +728,7 @@
       .container { padding: 20px 16px; }
       .card { padding: 18px; }
       .info-section { grid-template-columns: 1fr; }
-      .theme-toggle { top: 12px; right: 12px; width: 36px; height: 36px; font-size: 16px; }
+      .theme-toggle { top: 12px; right: 12px; width: 40px; height: 40px; font-size: 16px; }
       .password-display { font-size: 13px; padding: 16px; }
       .strength-section { flex-direction: column; align-items: stretch; }
       .strength-label { text-align: left; }
@@ -721,7 +759,7 @@
   </header>
 
   <section class="card password-area">
-    <div class="password-display" id="output">
+    <div class="password-display" id="output" dir="ltr">
       <span class="placeholder">&#8207;Generate a password</span>
     </div>
     <div id="charBreakdown" class="char-breakdown" style="display:none">
@@ -764,7 +802,7 @@
       <span class="icon">&#128203;</span> Copy
     </button>
   </div>
-  <div class="status" id="status"></div>
+  <div class="status" id="status" role="status" aria-live="polite"></div>
 
   <section class="info-section">
     <div class="info-card">
@@ -783,7 +821,7 @@
     <h3><span></span> Why Bilingual Passwords?</h3>
     <p>OmniPass combines Arabic script (<span class="arabic-script">&#1575;&#1604;&#1593;&#1585;&#1576;&#1610;&#1577;</span>) with Latin characters, numbers, and symbols. This unique approach creates passwords with dramatically larger character sets and higher entropy per character — making them inherently stronger against brute-force attacks.</p>
     <div class="benefits">
-      <span><span class="check">&#10003;</span> 48% larger charset with Arabic</span>
+      <span><span class="check">&#10003;</span> 51% larger charset with Arabic</span>
       <span><span class="check">&#10003;</span> Ideal for Arabic-speaking users</span>
       <span><span class="check">&#10003;</span> Cryptographically secure</span>
     </div>
@@ -792,7 +830,7 @@
   <section class="history-section" id="historySection">
     <div class="history-header">
       <h3>&#128338; Recent Passwords</h3>
-      <button class="clear-btn" id="clearHistory">Clear</button>
+      <button class="clear-btn" id="clearHistory" aria-label="Clear password history">Clear</button>
     </div>
     <div class="history-list" id="historyList">
       <div class="history-empty">No passwords yet</div>
@@ -906,18 +944,25 @@
     return { latin, arabic, nums, syms };
   }
 
+  function esc(s) {
+    return s.replace(/[&<>"']/g, c => (
+      { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
+    ));
+  }
+
   function colorizePassword(pwd) {
     let html = '';
     for (const ch of pwd) {
+      const e = esc(ch);
       const code = ch.codePointAt(0);
       if (code >= 0x0600 && code <= 0x06FF) {
-        html += `<span class="ar-char">${ch}</span>`;
+        html += `<span class="ar-char">${e}</span>`;
       } else if (/[a-zA-Z]/.test(ch)) {
-        html += `<span class="latin-char">${ch}</span>`;
+        html += `<span class="latin-char">${e}</span>`;
       } else if (/[0-9]/.test(ch)) {
-        html += `<span class="num-char">${ch}</span>`;
+        html += `<span class="num-char">${e}</span>`;
       } else {
-        html += `<span class="sym-char">${ch}</span>`;
+        html += `<span class="sym-char">${e}</span>`;
       }
     }
     return html;
@@ -993,6 +1038,9 @@
     const signal = currentController.signal;
 
     genPending = true;
+    lengthInput.classList.add('generating');
+    status.textContent = 'Generating\u2026';
+    status.className = 'status';
 
     const len = parseInt(lengthInput.value);
     const ar = arabicCheck.checked;
@@ -1025,22 +1073,23 @@
       addToHistory(data.password);
     } catch (e) {
       if (e.name === 'AbortError') return; // stale request — user already triggered a newer one
-      output.innerHTML = '<span class="placeholder">Error generating password</span>';
+      output.innerHTML = '<span class="placeholder">Generation failed</span>';
       output.className = 'password-display';
-      status.textContent = 'Failed to reach API';
-      status.className = 'status error flash';
+      status.textContent = 'Couldn\u2019t reach the password service \u2014 check your connection, then try Regenerate.';
+      status.className = 'status error';
       charBreakdown.style.display = 'none';
       strengthSection.style.display = 'none';
       charsetSize.textContent = '--';
       entropyValue.textContent = '--';
     } finally {
       genPending = false;
+      lengthInput.classList.remove('generating');
     }
   }
 
   function copy() {
     if (!currentPassword) return;
-    navigator.clipboard.writeText(currentPassword).then(() => {
+    const onSuccess = () => {
       status.textContent = 'Copied!';
       status.className = 'status success flash';
       copyBtn.classList.add('copied');
@@ -1051,7 +1100,17 @@
         copyBtn.classList.remove('copied');
         copyBtn.innerHTML = '<span class="icon">&#128203;</span> Copy';
       }, 2000);
-    });
+    };
+    const onFail = () => {
+      status.textContent = 'Copy failed \u2014 select the password and press Ctrl+C.';
+      status.className = 'status error';
+      setTimeout(() => { status.textContent = ''; status.className = 'status'; }, 3000);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(currentPassword).then(onSuccess).catch(onFail);
+    } else {
+      onFail();
+    }
   }
 
   function getHistory() {
@@ -1075,24 +1134,34 @@
       historyList.innerHTML = '<div class="history-empty">No passwords yet</div>';
       return;
     }
-    historyList.innerHTML = history.map(pwd =>
-      `<div class="history-item" data-pwd="${pwd.replace(/"/g, '&quot;')}">
-        <span class="h-entry">${pwd}</span>
-        <span class="h-copy">&#128203;</span>
-      </div>`
+    historyList.innerHTML = history.map((pwd, i) =>
+      `<button type="button" class="history-item" data-pwd="${esc(pwd)}" aria-label="Copy password ${i + 1} from history">
+        <span class="h-entry" dir="ltr">${esc(pwd)}</span>
+        <span class="h-copy" aria-hidden="true">&#128203;</span>
+      </button>`
     ).join('');
 
     historyList.querySelectorAll('.history-item').forEach(el => {
       el.addEventListener('click', () => {
         const pwd = el.dataset.pwd;
-        navigator.clipboard.writeText(pwd).then(() => {
+        const done = () => {
           status.textContent = 'Copied from history!';
           status.className = 'status success flash';
           setTimeout(() => {
             status.textContent = '';
             status.className = 'status';
           }, 1500);
-        });
+        };
+        const fail = () => {
+          status.textContent = 'Copy failed \u2014 select the password and press Ctrl+C.';
+          status.className = 'status error';
+          setTimeout(() => { status.textContent = ''; status.className = 'status'; }, 3000);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(pwd).then(done).catch(fail);
+        } else {
+          fail();
+        }
       });
     });
   }

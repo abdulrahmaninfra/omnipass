@@ -8,10 +8,12 @@
   <style>
     :root {
       --bg: #0a0a0a;
+      --bg-card: #141414;
+      --bg-card-hover: #1a1a1a;
       --bg-input: #1e1e1e;
       --text: #e8e8e8;
-      --text-secondary: #888;
-      --text-muted: #555;
+      --text-secondary: #9a9a9a;
+      --text-muted: #8a8a8a;
       --border: #222;
       --border-focus: #444;
       --accent: #4a9eff;
@@ -20,7 +22,34 @@
       --accent-warm-glow: rgba(255,154,74,0.2);
       --success: #4caf50;
       --success-bg: rgba(76,175,80,0.15);
+      --error: #ef5350;
       --radius-sm: 8px;
+      --strength-weak: #ef5350;
+      --strength-fair: #ffa726;
+      --strength-good: #ffd54f;
+      --strength-strong: #9ccc65;
+    }
+    [data-theme="light"] {
+      --bg: #f0f2f5;
+      --bg-card: #ffffff;
+      --bg-card-hover: #fafafa;
+      --bg-input: #f0f2f5;
+      --text: #1a1a2e;
+      --text-secondary: #6b7280;
+      --text-muted: #6b7280;
+      --border: #e5e7eb;
+      --border-focus: #4a9eff;
+      --accent: #2563eb;
+      --accent-glow: rgba(37,99,235,0.15);
+      --accent-warm: #ea580c;
+      --accent-warm-glow: rgba(234,88,12,0.12);
+      --success: #16a34a;
+      --success-bg: rgba(22,163,74,0.1);
+      --error: #dc2626;
+      --strength-weak: #d32f2f;
+      --strength-fair: #ef6c00;
+      --strength-good: #a16207;
+      --strength-strong: #4d7c0f;
     }
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -35,7 +64,7 @@
 
     .header { margin-bottom: 16px; }
     .title {
-      font-size: 18px;
+      font-size: 22px;
       font-weight: 700;
       letter-spacing: -0.3px;
     }
@@ -138,6 +167,18 @@
       outline: none;
       cursor: pointer;
     }
+    input[type="range"]:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 4px;
+      border-radius: 4px;
+    }
+    .btn-copy:focus-visible,
+    .option-chip:focus-within,
+    .footer a:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+      border-radius: 6px;
+    }
     input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;
@@ -156,6 +197,16 @@
       background: var(--bg-input);
       border: 2px solid var(--accent);
       cursor: pointer;
+    }
+    @keyframes thumbPulse {
+      0%, 100% { box-shadow: 0 0 10px var(--accent-glow); }
+      50% { box-shadow: 0 0 25px var(--accent-glow), 0 0 50px var(--accent-glow); }
+    }
+    input[type="range"].generating::-webkit-slider-thumb {
+      animation: thumbPulse 0.6s ease-in-out 2;
+    }
+    input[type="range"].generating::-moz-range-thumb {
+      animation: thumbPulse 0.6s ease-in-out 2;
     }
 
     .option-chip {
@@ -224,10 +275,10 @@
       font-weight: 600;
       color: var(--text-muted);
     }
-    .strength-tag.weak { color: #ef5350; }
-    .strength-tag.fair { color: #ff9800; }
-    .strength-tag.good { color: #ffc107; }
-    .strength-tag.strong { color: #8bc34a; }
+    .strength-tag.weak { color: var(--strength-weak); }
+    .strength-tag.fair { color: var(--strength-fair); }
+    .strength-tag.good { color: var(--strength-good); }
+    .strength-tag.strong { color: var(--strength-strong); }
     .strength-tag.very-strong { color: var(--success); }
 
     .status {
@@ -277,7 +328,7 @@
       <div class="subtitle">Bilingual Password Generator</div>
     </div>
 
-    <div class="password-display" id="output">
+    <div class="password-display" id="output" dir="ltr">
       <span class="placeholder">Generate a password</span>
     </div>
     <div class="char-breakdown" id="charBreakdown" style="display:none">
@@ -310,7 +361,7 @@
       <span class="strength-tag" id="strengthDisplay" style="margin-left: auto;"></span>
     </div>
 
-    <div class="status" id="status"></div>
+    <div class="status" id="status" role="status" aria-live="polite"></div>
 
     <div class="footer">
       <a href="https://github.com/abdulrahmaninfra/omnipass" target="_blank">&#128279; omnipass</a>
