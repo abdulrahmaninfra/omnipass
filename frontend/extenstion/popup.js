@@ -63,18 +63,25 @@ function analyzePassword(pwd) {
   return { latin, arabic, nums, syms };
 }
 
+function esc(s) {
+  return s.replace(/[&<>"']/g, (c) =>
+    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]),
+  );
+}
+
 function colorizePassword(pwd) {
   let html = "";
   for (const ch of pwd) {
+    const e = esc(ch);
     const code = ch.codePointAt(0);
     if (code >= 0x0600 && code <= 0x06ff) {
-      html += `<span class="ar-char">${ch}</span>`;
+      html += `<span class="ar-char">${e}</span>`;
     } else if (/[a-zA-Z]/.test(ch)) {
-      html += `<span class="latin-char">${ch}</span>`;
+      html += `<span class="latin-char">${e}</span>`;
     } else if (/[0-9]/.test(ch)) {
-      html += `<span class="num-char">${ch}</span>`;
+      html += `<span class="num-char">${e}</span>`;
     } else {
-      html += `<span class="sym-char">${ch}</span>`;
+      html += `<span class="sym-char">${e}</span>`;
     }
   }
   return html;
@@ -143,6 +150,9 @@ async function generate() {
   const signal = currentController.signal;
 
   genPending = true;
+  lengthInput.classList.add("generating");
+  status.textContent = "Generating\u2026";
+  status.className = "status";
 
   const len = parseInt(lengthInput.value);
   const ar = arabicCheck.checked;
@@ -170,20 +180,21 @@ async function generate() {
     status.className = "status";
   } catch (e) {
     if (e.name === "AbortError") return; // stale request — user already triggered a newer one
-    output.innerHTML = '<span class="placeholder">Error</span>';
+    output.innerHTML = '<span class="placeholder">Generation failed</span>';
     output.className = "password-display";
-    status.textContent = "Failed to reach API";
+    status.textContent = "Couldn\u2019t reach the password service \u2014 try again.";
     status.className = "status error";
     charBreakdown.style.display = "none";
     strengthDisplay.textContent = "";
   } finally {
     genPending = false;
+    lengthInput.classList.remove("generating");
   }
 }
 
 function copy() {
   if (!currentPassword) return;
-  navigator.clipboard.writeText(currentPassword).then(() => {
+  const onSuccess = () => {
     status.textContent = "Copied!";
     status.className = "status success flash";
     copyBtn.classList.add("copied");
@@ -194,7 +205,17 @@ function copy() {
       copyBtn.classList.remove("copied");
       copyBtn.innerHTML = '<span class="icon">&#128203;</span> Copy';
     }, 2000);
-  });
+  };
+  const onFail = () => {
+    status.textContent = "Copy failed \u2014 select the password and press Ctrl+C.";
+    status.className = "status error";
+    setTimeout(() => { status.textContent = ""; status.className = "status"; }, 3000);
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(currentPassword).then(onSuccess).catch(onFail);
+  } else {
+    onFail();
+  }
 }
 
 arabicCheck.addEventListener("change", () => {
