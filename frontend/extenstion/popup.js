@@ -157,11 +157,14 @@ async function generate() {
   const len = parseInt(lengthInput.value);
   const ar = arabicCheck.checked;
 
-  const params = new URLSearchParams({ length: len, include_arabic: ar });
+  const params = { length: len, include_arabic: ar };
 
   try {
-    const res = await fetch(`${API_BASE}?${params}`, {
+    const res = await fetch(API_BASE, {
       signal,
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(params),
       keepalive: true,
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
