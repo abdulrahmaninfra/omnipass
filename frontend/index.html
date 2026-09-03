@@ -1045,14 +1045,17 @@
     const len = parseInt(lengthInput.value);
     const ar = arabicCheck.checked;
 
-    const params = new URLSearchParams({
+    const body = JSON.stringify({
       length: len,
       include_arabic: ar,
     });
 
     try {
-      const res = await fetch(`${API_BASE}?${params}`, {
+      const res = await fetch(API_BASE, {
         signal,
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body,
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
