@@ -8,3 +8,6 @@ __pycache__/
 .gitignore
 deploy.sh
 .secrets
+
+# local agent tooling
+.agents/
