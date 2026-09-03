@@ -27,7 +27,16 @@ class PasswordGenerator:
         self.include_katakana = include_katakana
         self.include_cherokee = include_cherokee
 
-        self.chars = CharacterSet.get_all()
+        self.chars = CharacterSet.get_all(
+            include_numbers=self.include_numbers,
+            include_alphabit=self.include_alphabit,
+            include_punctuation=self.include_punctuation,
+            include_arabic=self.include_arabic,
+            include_russian=self.include_russian,
+            include_abugidas=self.include_abugidas,
+            include_katakana=self.include_katakana,
+            include_cherokee=self.include_cherokee,
+        )
 
     def generate(self) -> str:
         password = []

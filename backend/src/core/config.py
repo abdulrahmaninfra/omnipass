@@ -13,7 +13,7 @@ class Settings(BaseSettings):
 
     API_VERSION: str = "1.1.0"
 
-    ALLOWED_ORIGINS: list[str] = ["https://omnipass-mu.vercel.app/"] # Production
+    ALLOWED_ORIGINS: list[str] = ["https://omnipass-mu.vercel.app"] # Production (no trailing slash - browsers send Origin without one)
     # ALLOWED_ORIGINS: list[str] = ["*"] # Development only, change to specific origins in production
     ALLOWED_METHODS: list[str] = ["POST"]
     MIN_PASSWORD_LENGTH: int = 8

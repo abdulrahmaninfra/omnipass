@@ -1,9 +1,9 @@
 import sys
 from pathlib import Path
 
-project_root = str(Path(__file__).resolve().parent.parent)
-if project_root not in sys.path:
-    sys.path.insert(0, project_root)
+# Ensure `src.*` imports resolve regardless of the process working directory
+# (repo root, backend/ dir, or Vercel function bundle).
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from contextlib import asynccontextmanager
 
@@ -11,8 +11,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 
-from backend.src.api.routes.password import router as password_router
-from backend.src.core.config import get_settings
+from src.api.routes.password import router as password_router
+from src.core.config import get_settings
 
 
 @asynccontextmanager

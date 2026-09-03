@@ -1,18 +1,5 @@
 from pydantic import BaseModel, Field
 
-from ..core.config import get_settings
-
-
-_settings = get_settings()
-
-
-class PasswordRequest(BaseModel):
-    length: int = Field(
-        _settings.DEFAULT_PASSWORD_LENGTH,
-        ge=_settings.MIN_PASSWORD_LENGTH,
-        le=_settings.MAX_PASSWORD_LENGTH,
-    )
-    includeArabic: bool = False
 
 class PasswordGenerateRequest(BaseModel):
     length: int = Field(default=16, ge=8, le=256, description="Password length")
